@@ -16,18 +16,28 @@ Every outline must follow this exact structure:
 - Keep this proportional to a ~150-200 word intro in the final post
 
 ### 2. Segue section - H2 heading containing the keyword
+This section provides context before diving into specifics. The H2 heading must include the exact keyword or a close natural variant.
 - Explain the current state / background of the topic
-- Establish scale, stakes, or urgency
+- Establish scale, stakes, or urgency using any data from competitor posts or context provided
 - Set up the questions the body sections will answer
 
 ### 3. Body sections - H3 headings
-Use 3-5 H3 sections each with 3-5 bullet points.
+Use 3-5 H3 sections. For each H3 section:
+- A clear, descriptive heading (not the keyword - save that for H2s)
+- 3-5 bullet points describing what to cover: specific claims, data points, examples, or questions to answer
+- At least one bullet should reference a point from the competitor context that this post should match, improve on, or differentiate from
 
 ### 4. Conclusion - H2 heading containing the keyword
 - 2-3 bullets summarizing the core takeaway
+- A natural transition into the CTA
 - The CTA itself, clearly stated
 
-Output clean Markdown only.`;
+Rules:
+- Do not write the post. Outlines only.
+- Do not use generic bullets like "discuss the importance of X" - make every bullet specific and actionable for a writer.
+- Do not repeat the keyword in every heading - it belongs in the H2s, not the H3s.
+- Do not invent statistics or data points not supported by the context provided.
+- Output clean Markdown only.`;
 
   try {
     const { headline, keyword, cta, context } = JSON.parse(event.body);
@@ -56,19 +66,14 @@ ${context || "No competitor context provided - use general industry knowledge fo
     });
 
     const data = await response.json();
+    const text = data.content?.map((b) => b.text || "").join("") || "";
 
-    // Return full API response for debugging
-    if (!data.content || data.content.length === 0) {
+    if (!text) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ 
-          error: "No content in response",
-          debug: JSON.stringify(data)
-        }),
+        body: JSON.stringify({ error: "No outline returned from API." }),
       };
     }
-
-    const text = data.content.map((b) => b.text || "").join("");
 
     return {
       statusCode: 200,
