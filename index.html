@@ -107,7 +107,7 @@
           setOutline(text);
           setSubmitted(true);
         } catch(e) {
-          setError("Something went wrong: " + e.message + " | " + (data && data.debug ? data.debug : ""));
+          setError("Something went wrong: " + e.message);
         }
         setLoading(false);
       };
