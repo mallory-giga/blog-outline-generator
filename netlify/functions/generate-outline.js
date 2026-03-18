@@ -65,15 +65,15 @@ ${context || "No competitor context provided - use general industry knowledge fo
       }),
     });
 
-    const data = await response.json();
-    const text = data.content?.map((b) => b.text || "").join("") || "";
+   const data = await response.json();
+const text = data.content?.map((b) => b.text || "").join("") || "";
 
-    if (!text) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "No outline returned from API." }),
-      };
-    }
+if (!text) {
+  return {
+    statusCode: 500,
+    body: JSON.stringify({ error: JSON.stringify(data) }),
+  };
+}
 
     return {
       statusCode: 200,
