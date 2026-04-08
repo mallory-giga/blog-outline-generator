@@ -89,28 +89,38 @@
       const isValid = headline.trim() && keyword.trim() && cta.trim();
 
       const handleSubmit = async () => {
-        if (!isValid) return;
-        setLoading(true);
-        setError("");
-        setOutline("");
+  if (!isValid) return;
+  setLoading(true);
+  setError("");
+  setOutline("");
 
-        try {
-          const response = await fetch("/.netlify/functions/generate-outline", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ headline, keyword, cta, context }),
-          });
-          const data = await response.json();
-          if (data.error) throw new Error(data.error);
-          const text = data.outline || "";
-          if (!text) throw new Error("No outline returned.");
-          setOutline(text);
-          setSubmitted(true);
-        } catch(e) {
-          setError("Something went wrong: " + e.message);
-        }
-        setLoading(false);
-      };
+  try {
+    const response = await fetch("/api/generate-outline", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ headline, keyword, cta, context }),
+    });
+
+    if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let result = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      result += decoder.decode(value, { stream: true });
+      setOutline(result); // updates the UI as text streams in
+    }
+
+    setSubmitted(true);
+  } catch (e) {
+    setError("Something went wrong: " + e.message);
+  }
+
+  setLoading(false);
+};
 
       const handleReset = () => {
         setHeadline(""); setKeyword(""); setCta(""); setContext("");
