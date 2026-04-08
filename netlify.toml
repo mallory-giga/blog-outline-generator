@@ -1,2 +1,3 @@
-[functions]
-  node_bundler = "esbuild"
+/index.html
+/netlify/functions/generate-outline.js
+/netlify.toml
