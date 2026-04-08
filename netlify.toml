@@ -1,3 +1,6 @@
-/index.html
-/netlify/functions/generate-outline.mjs
-/netlify.toml
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
